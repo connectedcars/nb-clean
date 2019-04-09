@@ -1,4 +1,4 @@
-"""Clean Jupyter notebooks of execution counts, metadata, and output."""
+"""Clean Jupyter notebooks of execution counts, metadata (and output if run with --no-output)."""
 
 import argparse
 import pathlib
@@ -96,10 +96,10 @@ def configure_git(args: argparse.Namespace) -> None:
     Parameters
     ----------
     args : argparse.Namespace
-        Unused.
+        Arguments parsed from the command line
 
     """
-    del args  # Unused.
+    cl_input = args.input
 
     git("config", "filter.nb-clean.clean", "nb-clean clean")
 
@@ -184,7 +184,7 @@ def main() -> None:
     )
     clean_parser.add_argument(
         "-i",
-        "--input",
+        "--in",
         nargs="?",
         type=argparse.FileType("r"),
         default=sys.stdin,
@@ -192,11 +192,16 @@ def main() -> None:
     )
     clean_parser.add_argument(
         "-o",
-        "--output",
+        "--out",
         nargs="?",
         type=argparse.FileType("w"),
         default=sys.stdout,
         help="output file",
+    )
+    clean_parser.add_argument(
+        "--no-output",
+        default=False,
+        help="remove outputs from notebook",
     )
     clean_parser.set_defaults(func=clean)
 
